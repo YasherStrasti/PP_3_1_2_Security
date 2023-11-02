@@ -1,6 +1,9 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
@@ -8,12 +11,14 @@ import org.springframework.security.core.GrantedAuthority;
 public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(name = "name")
+    @NotEmpty
+    @NotNull
     private String name;
 
 
-    public Role(long id) {
+    public Role(Long id) {
         this.id = id;
     }
 
@@ -28,7 +33,7 @@ public class Role implements GrantedAuthority {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

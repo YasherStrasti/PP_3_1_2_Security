@@ -2,14 +2,16 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.model.User;
 
+import javax.validation.Valid;
+
 @Controller
-@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -23,53 +25,49 @@ public class AdminController {
     }
 
 
-    @GetMapping(value = "/{id}")
+    @GetMapping("/user/{id}")
     public String getUserPage(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         return "/user";
     }
 
-    @GetMapping(value = "")
+    @GetMapping(value = "/admin")
     public String getAdminPage(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         return "index";
     }
 
-    @GetMapping("/{id}/edit")
+    @GetMapping("/user/{id}/edit")
     public String getEditPage(Model model, @PathVariable("id") Long id, Model roles) {
         roles.addAttribute("listRoles", roleService.findAll());
         model.addAttribute("user", userService.getUserById(id));
         return "edit";
     }
 
-    @PatchMapping("/{id}")
-    public String updateUser(@ModelAttribute("user") User user) {
-        userService.update(user);
-        return "redirect:/admin";
+    @PatchMapping("/user/{id}")
+    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "edit";
+        } else {
+            userService.update(user);
+            return "redirect:/admin";
+        }
     }
 
     @GetMapping("/new")
-    public String getNewUserPage(@ModelAttribute("user") User user, Model model, @RequestParam(required = false) String username) {
+    public String getNewUserPage(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("listRoles", roleService.findAll());
-
-        if (username != null) {
-            System.out.println("Пользователь существует!");
-        } else {
-            System.out.println("Пользователя не существует!");
-        }
-
         return "new";
     }
 
     @PostMapping("/user")
-    public String createUser(@ModelAttribute("user") User user) {
-        boolean isNotExistUser = userService.save(user);
-
-        if (!isNotExistUser) {
+    public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return "new";
+        } else {
+            userService.save(user);
+            return "redirect:/admin";
         }
-
-        return "redirect:/admin";
     }
 
     @DeleteMapping("/{id}")
