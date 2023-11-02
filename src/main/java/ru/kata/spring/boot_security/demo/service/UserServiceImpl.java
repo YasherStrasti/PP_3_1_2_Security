@@ -50,9 +50,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
+    public boolean save(User user) {
+        if (userRepository.findByUsername(user.getUsername()) == null) {
+            user.setPassword(encoder.encode(user.getPassword()));
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
     @Override
