@@ -98,11 +98,13 @@
         <div class="field">
             <label for="username">Enter name:</label>
             <input type="text" th:field="*{username}" id="username"/>
+            <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name error</div>
         </div>
         <br/>
         <div class="field">
             <label for="password">Enter new password:</label>
             <input type="password" th:field="*{password}" id="password" required/>
+            <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name error</div>
         </div>
 
         <br/>
