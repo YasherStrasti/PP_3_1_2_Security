@@ -122,7 +122,10 @@
         </tr>
     </table>
     <div class="add-user-link">
-        <h1><a href="new">Create new user!</a></h1>
+<!--        <h1><a href="/new">Create new user!</a></h1>-->
+        <form th:method="GET" th:action="@{/admin/new}">
+            <button type="submit">Create new user</button>
+        </form>
         <h1><a href="/logout">logout</a></h1>
     </div>
 </div>

@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.util.UserValidator;
+
 import javax.validation.Valid;
 
 @Controller
@@ -16,12 +18,13 @@ public class AdminController {
 
     private final UserService userService;
     private final RoleService roleService;
-
+    private final UserValidator userValidator;
 
     @Autowired
-    public AdminController(UserService userService, RoleService roleService) {
+    public AdminController(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
         this.roleService = roleService;
+        this.userValidator = userValidator;
     }
 
 
@@ -46,6 +49,8 @@ public class AdminController {
 
     @PatchMapping("/user/{id}")
     public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
+
         if (bindingResult.hasErrors()) {
             return "edit";
         } else {
@@ -60,14 +65,16 @@ public class AdminController {
         return "new";
     }
 
-    @PostMapping("/user")
+    @PostMapping("/newuser")
     public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
+
         if (bindingResult.hasErrors()) {
             return "new";
-        } else {
-            userService.save(user);
-            return "redirect:/admin";
         }
+
+        userService.save(user);
+        return "redirect:/admin";
     }
 
     @DeleteMapping("/{id}")
