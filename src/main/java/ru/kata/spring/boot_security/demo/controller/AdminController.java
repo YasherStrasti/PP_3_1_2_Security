@@ -8,10 +8,10 @@ import org.springframework.ui.Model;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.model.User;
-
 import javax.validation.Valid;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -31,7 +31,7 @@ public class AdminController {
         return "/user";
     }
 
-    @GetMapping(value = "/admin")
+    @GetMapping(value = "")
     public String getAdminPage(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         return "index";
